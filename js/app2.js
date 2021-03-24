@@ -1,81 +1,81 @@
 var canvas = document.getElementById("canvas");
-var context = canvas.getContext("2d");
-var sprite;
+var ctx = canvas.getContext("2d");
+var sprChar;
 
 canvas.onkeydown = function(e) {
-    sprite.speedX = 0;
-    sprite.speedY = 0;
+    sprChar.xcoord = 0;
+    sprChar.ycoord = 0;
     switch (e.keyCode) {
     case 65:
-        sprite.setSprite("left");
-        sprite.speedX--;
+        sprChar.setSprite("left");
+        sprChar.xcoord--;
         break;
     case 87: 
-        sprite.setSprite("up");
-        sprite.speedY--;
+        sprChar.setSprite("up");
+        sprChar.ycoord--;
         break;
     case 68: 
-        sprite.setSprite("right");
-        sprite.speedX++;
+        sprChar.setSprite("right");
+        sprChar.xcoord++;
         break;
     case 83:
-        sprite.setSprite("down");
-        sprite.speedY++;
+        sprChar.setSprite("down");
+        sprChar.ycoord++;
         break;
     default:
         break;
     }
 };
 canvas.onkeyup = function(e) {
-    sprite.setSprite("idle");
-    sprite.speedX = 0;
-    sprite.speedY = 0;
+    sprChar.setSprite("idle");
+    sprChar.xcoord = 0;
+    sprChar.ycoord = 0;
 };
 var image = new Image();
 
 image.onload = function() {
-    sprite = new Character({
-        mapWidth: canvas.width,
-        mapHeight: canvas.height,
+    sprChar = new Character({
+        gameWidth: canvas.width,
+        gameHeight: canvas.height,
         image: image,
-        frameWidth: 32,
-        frameHeight: 48,
+        spritesheetWidth: 32,
+        spritesheetHeight: 48,
         interval: 100,
         left: 10,
         top: 10,
     });
 
-    sprite.addSprite({
+    sprChar.addSprite({
         name: "down",
-        startFrame: 0,
-        framesCount: 4
+        start: 0,
+        frames: 4
     });
 
-    sprite.addSprite({
+    sprChar.addSprite({
         name: "left",
-        startFrame: 4,
-        framesCount: 4
+        start: 4,
+        frames: 4
     });
-    sprite.addSprite({
+    sprChar.addSprite({
         name: "right",
-        startFrame: 8,
-        framesCount: 4
+        start: 8,
+        frames: 4
     });
-    sprite.addSprite({
+    sprChar.addSprite({
         name: "up",
-        startFrame: 12,
-        framesCount: 4
+        start: 12,
+        frames: 4
     });
-    sprite.addSprite({
+    sprChar.addSprite({
         name: "idle",
-        startFrame: 16,
-        framesCount: 4
+        start: 16,
+        frames: 4
     });
-    sprite.setSprite("idle");
+    sprChar.setSprite("idle");
     setInterval(function() {
-        sprite.update();
+        sprChar.update();
         canvas.width = canvas.width;
-        sprite.draw(context);
+        sprChar.draw(ctx);
     }, 1000 / 60);
 };
 
@@ -85,11 +85,11 @@ image.src = 'img/test3.png';
 
 function Character(data) {
 
-    this.mapWidth = data.mapWidth;
-    this.mapHeight = data.mapHeight;
+    this.gameWidth = data.gameWidth;
+    this.gameHeight = data.gameHeight;
 
-    this.speedX = 0;
-    this.speedY = 0;
+    this.xcoord = 0;
+    this.ycoord = 0;
 
     this.init(data);
 }
@@ -106,7 +106,7 @@ var AnimatedSprite = function(data) {
 
 AnimatedSprite.prototype = {
     start: function(){
-    this.isFinished = false;
+    // this.isFinished = false;
     this.currentFrame = 0;
     },        
     init: function(data) {
@@ -116,16 +116,16 @@ AnimatedSprite.prototype = {
             if (typeof this.isLooping != "boolean") this.isLooping = true;
 
             this.image = data.image;
-            this.frameWidth = data.frameWidth;
-            this.frameHeight = data.frameHeight || this.frameWidth;
+            this.spritesheetWidth = data.spritesheetWidth;
+            this.spritesheetHeight = data.spritesheetHeight || this.spritesheetWidth;
 
             this.sprites = [];
             this.interval = data.interval;
 
             this.left = data.left;
             this.top = data.top;
-            this.width = data.width || this.frameWidth;
-            this.height = data.hegiht || this.frameHeight;
+            this.width = data.width || this.spritesheetWidth;
+            this.height = data.hegiht || this.spritesheetHeight;
 
             this.onCompleted = data.onCompleted;
         }
@@ -133,9 +133,9 @@ AnimatedSprite.prototype = {
     addSprite: function(data) {
         this.sprites[data.name] = {
             name: data.name,
-            startFrame: data.startFrame || 0,
-            framesCount: data.framesCount || 1,
-            framesPerRow: Math.floor(this.image.width / this.frameWidth)
+            start: data.start || 0,
+            frames: data.frames || 1,
+            framesPerRow: Math.floor(this.image.width / this.spritesheetWidth)
         };
 
         this.currentSprite = this.currentSprite || this.sprites[data.name];
@@ -152,7 +152,7 @@ AnimatedSprite.prototype = {
         if (newTick - this.lastTick >= this.interval) {
             this.currentFrame++;
 
-            if (this.currentFrame == this.currentSprite.framesCount) {
+            if (this.currentFrame == this.currentSprite.frames) {
                 if (this.isLooping) this.currentFrame = 0;
                 else {
                     this.isFinished = true;
@@ -164,14 +164,14 @@ AnimatedSprite.prototype = {
         }
 
     },
-    draw: function(context) {
+    draw: function(ctx) {
 
         if (this.isFinished) return;
-        var realIndex = this.currentSprite.startFrame + this.currentFrame;
+        var realIndex = this.currentSprite.start + this.currentFrame;
         var row = Math.floor(realIndex / this.currentSprite.framesPerRow);
         var col = realIndex % this.currentSprite.framesPerRow;
 
-        context.drawImage(this.image, col * this.frameWidth, row * this.frameHeight, this.frameWidth, this.frameHeight, this.left, this.top, this.width, this.height);
+        ctx.drawImage(this.image, col * this.spritesheetWidth, row * this.spritesheetHeight, this.spritesheetWidth, this.spritesheetHeight, this.left, this.top, this.width, this.height);
 
     }
 }
@@ -180,12 +180,12 @@ AnimatedSprite.prototype = {
 Character.prototype = new AnimatedSprite();
 Character.prototype.update = function() {
 
-    var left = this.left + this.speedX;
-    var top = this.top + this.speedY;
-    var right = left + this.frameWidth;
-    var bottom = top + this.frameHeight;
+    var left = this.left + this.xcoord;
+    var top = this.top + this.ycoord;
+    var right = left + this.spritesheetWidth;
+    var bottom = top + this.spritesheetHeight;
 
-    if (left > 0 && right < this.mapWidth) this.left = left;
-    if (top > 0 && bottom < this.mapHeight) this.top = top;
+    if (left > 0 && right < this.gameWidth) this.left = left;
+    if (top > 0 && bottom < this.gameHeight) this.top = top;
     AnimatedSprite.prototype.update.call(this);
 };
