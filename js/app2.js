@@ -148,7 +148,6 @@ var spriteToBeUsed = function(zeldaSkeleton) {
 }
 player.prototype = new spriteToBeUsed();
 player.prototype.animate = function() {
-
     var x = this.x + this.xcoord;
     var y = this.y + this.ycoord;
     var xplus = x + this.spritesheetWidth;
