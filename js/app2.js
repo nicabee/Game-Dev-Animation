@@ -154,7 +154,11 @@ player.prototype.animate = function() {
 
     //collision detection
     
-    if (x > 0 && xplus < this.gameWidth) this.x = x; 
-    if (y > 0 && yplus < this.gameHeight) this.y = y;
+    if (x > 0 && xplus < this.gameWidth){
+        this.x = x; 
+    } 
+    if (y > 0 && yplus < this.gameHeight) {
+        this.y = y;
+    }
     spriteToBeUsed.prototype.animate.call(this);
 };
