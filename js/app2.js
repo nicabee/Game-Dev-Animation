@@ -149,15 +149,11 @@ player.prototype = new spriteToBeUsed();
 player.prototype.animate = function() {
     var x = this.x + this.xcoord;
     var y = this.y + this.ycoord;
-    var xplus = x + this.spritesheetWidth;
-    var yplus = y + this.spritesheetHeight;
-
     //collision detection
-    
-    if (x > 0 && xplus < this.gameWidth){
+    if (x > 0 && x + this.spritesheetWidth < this.gameWidth){
         this.x = x; 
     } 
-    if (y > 0 && yplus < this.gameHeight) {
+    if (y > 0 && y + this.spritesheetHeight < this.gameHeight) {
         this.y = y;
     }
     spriteToBeUsed.prototype.animate.call(this);
