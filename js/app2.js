@@ -2,37 +2,8 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 var sprChar;
 
-canvas.onkeydown = function(e) {
-    sprChar.xcoord = 0;
-    sprChar.ycoord = 0;
-    switch (e.keyCode) {
-    case 65:
-        sprChar.setSprite("left");
-        sprChar.xcoord--;
-        break;
-    case 87: 
-        sprChar.setSprite("up");
-        sprChar.ycoord--;
-        break;
-    case 68: 
-        sprChar.setSprite("right");
-        sprChar.xcoord++;
-        break;
-    case 83:
-        sprChar.setSprite("down");
-        sprChar.ycoord++;
-        break;
-    default:
-        break;
-    }
-};
-canvas.onkeyup = function(e) {
-    sprChar.setSprite("idle");
-    sprChar.xcoord = 0;
-    sprChar.ycoord = 0;
-};
 var image = new Image();
-
+image.src = 'img/test3.png';
 image.onload = function() {
     sprChar = new player({
         gameWidth: canvas.width,
@@ -79,8 +50,6 @@ image.onload = function() {
     }, 1000 / 60);
 };
 
-image.src = 'img/test3.png';
-
 function player(zeldaSkeleton) {
     this.gameWidth = zeldaSkeleton.gameWidth;
     this.gameHeight = zeldaSkeleton.gameHeight;
@@ -88,7 +57,6 @@ function player(zeldaSkeleton) {
     this.ycoord = 0;
     this.startSprite(zeldaSkeleton);
 }
-
 
 // initiate
 var spriteToBeUsed = function(zeldaSkeleton) {
@@ -98,7 +66,7 @@ var spriteToBeUsed = function(zeldaSkeleton) {
     this.oldSeconds = 0;
 };
 
- spriteToBeUsed.prototype = { //use prototype to attach new properties (needed as animation changes as key is pressed)    
+spriteToBeUsed.prototype = { //use prototype to attach new properties (needed as animation changes as key is pressed)    
     startSprite: function(zeldaSkeleton) {
         if (zeldaSkeleton) {
             this.isLooping = zeldaSkeleton.isLooping;
@@ -146,6 +114,37 @@ var spriteToBeUsed = function(zeldaSkeleton) {
         ctx.drawImage(this.image, c * this.spritesheetWidth, r * this.spritesheetHeight, this.spritesheetWidth, this.spritesheetHeight, this.x, this.y, this.width, this.height);
     }
 }
+
+canvas.onkeydown = function(e) {
+    sprChar.xcoord = 0;
+    sprChar.ycoord = 0;
+    switch (e.keyCode) {
+    case 65:
+        sprChar.setSprite("left");
+        sprChar.xcoord--;
+        break;
+    case 87: 
+        sprChar.setSprite("up");
+        sprChar.ycoord--;
+        break;
+    case 68: 
+        sprChar.setSprite("right");
+        sprChar.xcoord++;
+        break;
+    case 83:
+        sprChar.setSprite("down");
+        sprChar.ycoord++;
+        break;
+    default:
+        break;
+    }
+};
+canvas.onkeyup = function(e) {
+    sprChar.setSprite("idle");
+    sprChar.xcoord = 0;
+    sprChar.ycoord = 0;
+};
+
 player.prototype = new spriteToBeUsed();
 player.prototype.animate = function() {
     var x = this.x + this.xcoord;
@@ -153,7 +152,9 @@ player.prototype.animate = function() {
     var xplus = x + this.spritesheetWidth;
     var yplus = y + this.spritesheetHeight;
 
-    if (x > 0 && xplus < this.gameWidth) this.x = x;
+    //collision detection
+    
+    if (x > 0 && xplus < this.gameWidth) this.x = x; 
     if (y > 0 && yplus < this.gameHeight) this.y = y;
     spriteToBeUsed.prototype.animate.call(this);
 };
