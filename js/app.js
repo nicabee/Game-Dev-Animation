@@ -115,31 +115,24 @@ spriteToBeUsed.prototype = { //use prototype to attach new properties (needed as
     }
 }
 
-canvas.onkeydown = function(e) {
+function onkeydown(e) {
     sprChar.xcoord = 0;
     sprChar.ycoord = 0;
-    switch (e.keyCode) {
-    case 65:
+    if(e.keyCode == 65){
         sprChar.setSprite("left");
         sprChar.xcoord--;
-        break;
-    case 87: 
+    }else if (e.keyCode == 87){
         sprChar.setSprite("up");
         sprChar.ycoord--;
-        break;
-    case 68: 
+    }else if (e.keyCode == 68){
         sprChar.setSprite("right");
         sprChar.xcoord++;
-        break;
-    case 83:
+    }else if (e.keyCode == 83){
         sprChar.setSprite("down");
         sprChar.ycoord++;
-        break;
-    default:
-        break;
     }
 };
-canvas.onkeyup = function(e) {
+function onkeyup(e) {
     sprChar.setSprite("idle");
     sprChar.xcoord = 0;
     sprChar.ycoord = 0;
@@ -158,3 +151,6 @@ player.prototype.animate = function() {
     }
     spriteToBeUsed.prototype.animate.call(this);
 };
+
+window.addEventListener("keydown", onkeydown);
+window.addEventListener("keyup", onkeyup);
